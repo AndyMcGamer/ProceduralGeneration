@@ -21,8 +21,6 @@ public class GridManager : MonoBehaviour
         Vector3 currentPos;
         float origAngle;
 
-        // Start at center (0,0)
-
         if (numOfSides == 6)
         {
             sideLength = 1;
@@ -33,7 +31,7 @@ public class GridManager : MonoBehaviour
                 currentPos = transform.position;
                 offset = new Vector3(0, i, 0);
                 float angle = origAngle;
-                for (int j = 0; j <= 6 * i; j++)
+                for (int j = 0; j < 6 * i; j++)
                 {
                     
                     currentPos += offset;
@@ -51,6 +49,23 @@ public class GridManager : MonoBehaviour
         {
             origAngle = -Mathf.PI / numOfSides;
             sideLength = 2f * radius * Mathf.Sin(Mathf.PI / numOfSides);
+            for (int i = 0; i <= radius; i++)
+            {
+                currentPos = transform.position;
+                offset = new Vector3(0, i, 0);
+                float angle = origAngle;
+                for (int j = 0; j < numOfSides * i; j++)
+                {
+
+                    currentPos += offset;
+                    vertices.Add(currentPos);
+                    if (i > 0 && j % i == 0)
+                    {
+                        if (j > 0) angle += 2 * origAngle;
+                        offset = sideLength * new Vector3(Mathf.Cos(angle), Mathf.Sin(angle));
+                    }
+                }
+            }
         }
 
     }

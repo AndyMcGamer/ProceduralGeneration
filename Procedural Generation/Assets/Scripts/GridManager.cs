@@ -10,18 +10,29 @@ public class GridManager : MonoBehaviour
 
     private List<Vector3> vertices;
 
+    private void OnDrawGizmos()
+    {
+        if (vertices.Count < 1) return;
+        foreach (var pos in vertices)
+        {
+            Gizmos.DrawSphere(pos, 0.05f);
+        }
+    }
+
 
     // Generate Vertices In Shape
 
     public void DrawVertices()
     {
-        vertices.Clear();
+        vertices = new();
         float sideLength;
         Vector3 offset;
         Vector3 currentPos;
         float origAngle;
 
-        if (numOfSides == 6)
+        vertices.Add(Vector3.zero); // center (0,0)
+
+        if (numOfSides == 6) // For hexagon
         {
             sideLength = 1;
             origAngle = -Mathf.PI / 6f;
@@ -29,17 +40,16 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i <= radius; i++)
             {
                 currentPos = transform.position;
-                offset = new Vector3(0, i, 0);
+                offset = new Vector3(0, 0, i);
                 float angle = origAngle;
                 for (int j = 0; j < 6 * i; j++)
                 {
-                    
                     currentPos += offset;
                     vertices.Add(currentPos);
                     if( i > 0 && j % i == 0)
                     {
                         if (j > 0) angle += 2 * origAngle;
-                        offset = sideLength * new Vector3(Mathf.Cos(angle), Mathf.Sin(angle));
+                        offset = sideLength * new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
                     }
                 }
             }
@@ -48,11 +58,12 @@ public class GridManager : MonoBehaviour
         else
         {
             origAngle = -Mathf.PI / numOfSides;
-            sideLength = 2f * radius * Mathf.Sin(Mathf.PI / numOfSides);
+            sideLength = 2f * Mathf.Sin(Mathf.PI / numOfSides);
             for (int i = 0; i <= radius; i++)
             {
+                
                 currentPos = transform.position;
-                offset = new Vector3(0, i, 0);
+                offset = new Vector3(0, 0, i);
                 float angle = origAngle;
                 for (int j = 0; j < numOfSides * i; j++)
                 {
@@ -62,7 +73,7 @@ public class GridManager : MonoBehaviour
                     if (i > 0 && j % i == 0)
                     {
                         if (j > 0) angle += 2 * origAngle;
-                        offset = sideLength * new Vector3(Mathf.Cos(angle), Mathf.Sin(angle));
+                        offset = sideLength * new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
                     }
                 }
             }
@@ -79,4 +90,9 @@ public class GridManager : MonoBehaviour
 
     // Skew vertices somehow (figure this one out or ask Oskar)
 
+
+    public void Clear()
+    {
+        vertices.Clear();
+    }
 }

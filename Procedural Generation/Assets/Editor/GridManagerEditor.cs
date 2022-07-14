@@ -24,7 +24,7 @@ public class GridManagerEditor : Editor
     {
         serializedObject.Update();
         EditorGUILayout.IntSlider(numOfSides, 3, 20);
-        EditorGUILayout.IntSlider(radius, 0, 10);
+        EditorGUILayout.IntSlider(radius, 1, 10);
         serializedObject.ApplyModifiedProperties();
 
         EditorGUILayout.Space();
@@ -36,7 +36,14 @@ public class GridManagerEditor : Editor
 
         EditorGUILayout.Space();
 
-        if(GUILayout.Button("Clear Gizmos"))
+        if (GUILayout.Button("Triangulate"))
+        {
+            gridManager.Triangulate();
+        }
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Clear Gizmos"))
         {
             gridManager.Clear();
         }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Classes;
 
 [ExecuteInEditMode]
 public class GridManager : MonoBehaviour
@@ -8,14 +9,27 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int numOfSides = 3;
     [SerializeField] private int radius = 1;
 
+    private float sideLength;
+
     private List<Vector3> vertices;
+    private List<Triangle> triangulation;
 
     private void OnDrawGizmos()
     {
-        if (vertices.Count < 1) return;
+        if (vertices.Count < 1 || vertices == null) return;
+        Gizmos.color = Color.black;
         foreach (var pos in vertices)
         {
             Gizmos.DrawSphere(pos, 0.05f);
+            
+        }
+        if (triangulation == null) return;
+        foreach (Triangle triangle in triangulation)
+        {
+            foreach (Edge edge in triangle.edges)
+            {
+                Gizmos.DrawLine(edge.vertices[0], edge.vertices[1]);
+            }
         }
     }
 
@@ -25,9 +39,9 @@ public class GridManager : MonoBehaviour
     public void DrawVertices()
     {
         vertices = new();
-        float sideLength;
         Vector3 offset;
         Vector3 currentPos;
+        sideLength = 0;
         float origAngle;
 
         vertices.Add(Vector3.zero); // center (0,0)
@@ -81,7 +95,69 @@ public class GridManager : MonoBehaviour
 
     }
 
-    // Delaunay Triangulation or something (make triangles)
+    // Delaunay Triangulation with Bowyer-Watson Algorithm
+
+    public void Triangulate()
+    {
+        triangulation = new();
+        Triangle superTriangle = CalculateSuperTriangle();
+        triangulation.Add(superTriangle);
+        foreach (Vector3 point in vertices)
+        {
+            List<Triangle> badTriangles = new();
+            foreach (Triangle triangle in triangulation)
+            {
+                if (triangle.InCircumcenter(point))
+                {
+                    badTriangles.Add(triangle);
+                }
+            }
+            List<Edge> polygonHole = new();
+            foreach (Triangle badTriangle in badTriangles)
+            {
+                foreach (Edge edge in badTriangle.edges)
+                {
+                    bool sharedEdge = false;
+                    foreach (Triangle other in badTriangles)
+                    {
+                        if (badTriangle.vertices == other.vertices) continue;
+                        if (other.HasEdge(edge)) sharedEdge = true;
+                    }
+                    if (!sharedEdge) polygonHole.Add(edge);
+                }
+            }
+            foreach (Triangle badTriangle in badTriangles)
+            {
+                triangulation.Remove(badTriangle);
+            }
+            foreach (Edge edge in polygonHole)
+            {
+                triangulation.Add(new Triangle(edge.vertices[0], edge.vertices[1], point));
+            }
+        }
+
+        foreach (Triangle triangle in triangulation.ToArray())
+        {
+            if (superTriangle.SharesPoint(triangle)) triangulation.Remove(triangle);
+        }
+
+    }
+
+    private Triangle CalculateSuperTriangle()
+    {
+        int outerRing = radius * numOfSides;
+
+        Vector3[] verts = new Vector3[3];
+
+        verts[0] = new Vector3(0, 0, outerRing);
+        verts[1] = new Vector3(outerRing, 0, 0);
+        verts[2] = new Vector3(-outerRing, 0, -outerRing);
+
+
+        return new Triangle(verts);
+        
+    }
+
 
     // Combine some number of triangles into quadrilaterals
 
@@ -94,5 +170,6 @@ public class GridManager : MonoBehaviour
     public void Clear()
     {
         vertices.Clear();
+        triangulation.Clear();
     }
 }

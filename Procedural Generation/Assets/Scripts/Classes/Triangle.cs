@@ -5,10 +5,13 @@ using UnityEngine;
 
 namespace Classes
 {
-    public struct Triangle
+    public class Triangle
     {
         public Edge[] edges;
         public Vector3[] vertices;
+
+        // private Vector3 circumcenter;
+        // private float circumradius;
 
         public Triangle(Vector3[] vertices)
         {
@@ -17,7 +20,6 @@ namespace Classes
             edges[0] = new Edge(vertices[0], vertices[1]);
             edges[1] = new Edge(vertices[1], vertices[2]);
             edges[2] = new Edge(vertices[2], vertices[0]);
-
         }
 
         public Triangle(Vector3 v1, Vector3 v2, Vector3 v3)
@@ -30,8 +32,40 @@ namespace Classes
             edges[0] = new Edge(vertices[0], vertices[1]);
             edges[1] = new Edge(vertices[1], vertices[2]);
             edges[2] = new Edge(vertices[2], vertices[0]);
+
         }
 
+        //private void CalculateCircumcenterAndRadius()
+        //{
+        //    float mx1 = (vertices[1].x + vertices[0].x) / 2f;
+        //    float my1 = (vertices[1].z + vertices[0].z) / 2f;
+        //    float a1 = vertices[1].x - vertices[0].x;
+        //    float b1 = vertices[1].z - vertices[0].z;
+        //    float c1 = a1 * mx1 + b1 * my1;
+
+        //    float mx2 = (vertices[1].x + vertices[2].x) / 2;
+        //    float my2 = (vertices[1].z + vertices[2].z) / 2;
+        //    float a2 = vertices[2].x - vertices[1].x;
+        //    float b2 = vertices[2].z - vertices[1].z;
+        //    float c2 = a2 * mx2 + b2 * my2;
+
+        //    // Use Cramers Rule
+
+        //    float det = (a1 * b2) - (a2 * b1);
+        //    float xDet = (c1 * b2) - (c2 * b1);
+        //    float yDet = (a1 * c2) - (a2 * c1);
+
+        //    circumcenter = new Vector3(xDet / det, 0, yDet / det);
+        //    circumradius = (circumcenter - vertices[0]).sqrMagnitude;
+        //}
+
+        // Pre computing circumradius and circumcenter yields marginal improvement (30ms with 20 sides and radius of 10)
+        // At large values of n, the method of computing circumcenter is inaccurate and the same speed (or even slower) compared to the typical method
+        //public bool BetterInCircumcenter(Vector3 point) 
+        //{
+        //    return (circumcenter - point).sqrMagnitude <= circumradius;
+        //}
+        
         public bool InCircumcenter(Vector3 point)
         {
             // get difference between vertices and point (vertices must be ccw)

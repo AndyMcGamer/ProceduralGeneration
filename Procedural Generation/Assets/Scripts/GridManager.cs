@@ -16,7 +16,8 @@ public class GridManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (vertices.Count < 1 || vertices == null) return;
+        if (vertices == null) return;
+        if (vertices.Count < 1) return;
         Gizmos.color = Color.black;
         foreach (var pos in vertices)
         {
@@ -100,6 +101,8 @@ public class GridManager : MonoBehaviour
     public void Triangulate()
     {
         triangulation = new();
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
         Triangle superTriangle = CalculateSuperTriangle();
         triangulation.Add(superTriangle);
         foreach (Vector3 point in vertices)
@@ -140,7 +143,8 @@ public class GridManager : MonoBehaviour
         {
             if (superTriangle.SharesPoint(triangle)) triangulation.Remove(triangle);
         }
-
+        sw.Stop();
+        Debug.Log(sw.ElapsedMilliseconds);
     }
 
     private Triangle CalculateSuperTriangle()
@@ -169,7 +173,7 @@ public class GridManager : MonoBehaviour
 
     public void Clear()
     {
-        vertices.Clear();
-        triangulation.Clear();
+        if(vertices != null) vertices.Clear();
+        if(triangulation != null) triangulation.Clear();
     }
 }

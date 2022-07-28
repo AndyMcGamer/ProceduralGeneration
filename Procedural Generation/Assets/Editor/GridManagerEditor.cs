@@ -23,8 +23,8 @@ public class GridManagerEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        EditorGUILayout.IntSlider(numOfSides, 3, 20);
-        EditorGUILayout.IntSlider(radius, 1, 10);
+        EditorGUILayout.IntSlider(numOfSides, 3, 30);
+        EditorGUILayout.IntSlider(radius, 1, 15);
         serializedObject.ApplyModifiedProperties();
 
         EditorGUILayout.Space();

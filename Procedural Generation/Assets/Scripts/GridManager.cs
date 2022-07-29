@@ -93,7 +93,6 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
-
     }
 
     // Delaunay Triangulation with Bowyer-Watson Algorithm
@@ -131,6 +130,10 @@ public class GridManager : MonoBehaviour
             }
             foreach (Triangle badTriangle in badTriangles)
             {
+                //foreach (Triangle triangle in badTriangle.adjacencyList)
+                //{
+                //    triangle.adjacencyList.Remove(badTriangle);
+                //}
                 triangulation.Remove(badTriangle);
             }
             foreach (Edge edge in polygonHole)
@@ -147,6 +150,7 @@ public class GridManager : MonoBehaviour
         Debug.Log(sw.ElapsedMilliseconds);
     }
 
+    // Create a super triangle for Delaunay Triangulation
     private Triangle CalculateSuperTriangle()
     {
         int outerRing = radius * numOfSides;
@@ -162,11 +166,39 @@ public class GridManager : MonoBehaviour
         
     }
 
+    // Create Adjacency List for Each Triangle (Brute Force Method)
+    // The prediction is that this will be very very slow
+    private void CreateAdjacencyListsSlow()
+    {
+        foreach (Triangle triangle in triangulation)
+        {
+            if (triangle.adjacencyList.Count == 3) continue;
+            foreach (Triangle other in triangulation)
+            {
+                if (other == triangle) continue;
+                if(Triangle.GetSharedEdge(triangle, other).vertices != null && !triangle.adjacencyList.Contains(other))
+                {
+                    triangle.adjacencyList.Add(other);
+                    other.adjacencyList.Add(triangle);
+                }
+
+            }
+        }
+    }
 
     // Combine some number of triangles into quadrilaterals
+    // Inventing new words "Quadrilaterate"
+    public void Quadrilaterate()
+    {
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+        CreateAdjacencyListsSlow();
+        sw.Stop();
+        Debug.Log(sw.ElapsedMilliseconds);
+    }
 
     // Subdivide quads and triangles
-        // Make center vertex, draw segments from midpoints of edges to center
+    // Make center vertex, draw segments from midpoints of edges to center
 
     // Skew vertices somehow (figure this one out or ask Oskar)
 

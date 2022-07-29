@@ -5,16 +5,19 @@ using UnityEngine;
 
 namespace Classes
 {
-    public class Triangle
+    public class Triangle : IShapeObject
     {
+
         public Edge[] edges;
         public Vector3[] vertices;
-
         // private Vector3 circumcenter;
         // private float circumradius;
 
+        public List<Triangle> adjacencyList;
+
         public Triangle(Vector3[] vertices)
         {
+            adjacencyList = new(3);
             edges = new Edge[3];
             this.vertices = vertices;
             edges[0] = new Edge(vertices[0], vertices[1]);
@@ -24,6 +27,7 @@ namespace Classes
 
         public Triangle(Vector3 v1, Vector3 v2, Vector3 v3)
         {
+            adjacencyList = new(3);
             edges = new Edge[3];
             vertices = new Vector3[3];
             vertices[0] = v1;
@@ -61,6 +65,7 @@ namespace Classes
 
         // Pre computing circumradius and circumcenter yields marginal improvement (30ms with 20 sides and radius of 10)
         // At large values of n, the method of computing circumcenter is inaccurate and the same speed (or even slower) compared to the typical method
+        
         //public bool BetterInCircumcenter(Vector3 point) 
         //{
         //    return (circumcenter - point).sqrMagnitude <= circumradius;
@@ -93,6 +98,19 @@ namespace Classes
         {
             if (vertices.Intersect(other.vertices).Any()) return true;
             return false;
+        }
+
+        public static Edge GetSharedEdge(Triangle t1, Triangle t2)
+        {
+            Vector3[] shared = t1.vertices.Intersect(t2.vertices).ToArray();
+            if (shared.Length == 2)
+            {
+                return new Edge(shared);
+            }
+            else
+            {
+                return new Edge();
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ public class GridManager : MonoBehaviour
 
     private List<Vector3> vertices;
     private List<Triangle> triangulation;
+    private List<IShapeObject> shapes;
 
     private void OnDrawGizmos()
     {
@@ -22,9 +23,9 @@ public class GridManager : MonoBehaviour
         foreach (var pos in vertices)
         {
             Gizmos.DrawSphere(pos, 0.05f);
-            
+
         }
-        if (triangulation == null) return;
+        if (triangulation == null || triangulation.Count < 1) return;
         foreach (Triangle triangle in triangulation)
         {
             foreach (Edge edge in triangle.edges)
@@ -32,8 +33,15 @@ public class GridManager : MonoBehaviour
                 Gizmos.DrawLine(edge.vertices[0], edge.vertices[1]);
             }
         }
+        if (shapes == null || shapes.Count < 1 ) return;
+        foreach (IShapeObject shape in shapes)
+        {
+            foreach (Edge edge in shape.GetEdges())
+            {
+                Gizmos.DrawLine(edge.vertices[0], edge.vertices[1]);
+            }
+        }
     }
-
 
     // Generate Vertices In Shape
 
@@ -130,10 +138,6 @@ public class GridManager : MonoBehaviour
             }
             foreach (Triangle badTriangle in badTriangles)
             {
-                //foreach (Triangle triangle in badTriangle.adjacencyList)
-                //{
-                //    triangle.adjacencyList.Remove(badTriangle);
-                //}
                 triangulation.Remove(badTriangle);
             }
             foreach (Edge edge in polygonHole)
@@ -144,7 +148,10 @@ public class GridManager : MonoBehaviour
 
         foreach (Triangle triangle in triangulation.ToArray())
         {
-            if (superTriangle.SharesPoint(triangle)) triangulation.Remove(triangle);
+            if (superTriangle.SharesPoint(triangle))
+            {
+                triangulation.Remove(triangle);
+            }
         }
         sw.Stop();
         Debug.Log(sw.ElapsedMilliseconds);
@@ -167,7 +174,7 @@ public class GridManager : MonoBehaviour
     }
 
     // Create Adjacency List for Each Triangle (Brute Force Method)
-    // The prediction is that this will be very very slow
+    // The prediction is that this will be very very slow - turns out it's not as slow as I initially thought
     private void CreateAdjacencyListsSlow()
     {
         foreach (Triangle triangle in triangulation)
@@ -187,18 +194,53 @@ public class GridManager : MonoBehaviour
     }
 
     // Combine some number of triangles into quadrilaterals
-    // Inventing new words "Quadrilaterate"
+    // Inventing new words lol "Quadrilaterate"
     public void Quadrilaterate()
     {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        System.Diagnostics.Stopwatch sw = new();
         sw.Start();
+
+        shapes = new(triangulation.Count * 2 / 3);
         CreateAdjacencyListsSlow();
+
+        System.Random rng = new();
+        triangulation.Shuffle(rng);
+
+        for (int i = triangulation.Count - 1; i >= 0; i--)
+        {
+            Triangle tri = triangulation[i];
+            List<Triangle> adjList = tri.adjacencyList;
+            if (adjList.Count == 0)
+            {
+                shapes.Add(tri);
+                triangulation.RemoveAt(i);
+                continue;
+            }
+            Triangle t = adjList[rng.Next(adjList.Count)];
+            shapes.Add(new Quad(tri, t));
+            foreach (Triangle triangle in adjList)
+            {
+                triangle.adjacencyList.Remove(tri);
+            }
+            foreach (Triangle triangle in t.adjacencyList)
+            {
+                triangle.adjacencyList.Remove(t);
+            }
+            triangulation[triangulation.FindIndex(tri => tri == t)] = triangulation[i - 1];
+            triangulation[i - 1] = t;
+            triangulation.RemoveAt(i);
+            triangulation.RemoveAt(i - 1);
+            i--;
+        }
+
         sw.Stop();
         Debug.Log(sw.ElapsedMilliseconds);
     }
 
     // Subdivide quads and triangles
     // Make center vertex, draw segments from midpoints of edges to center
+
+
 
     // Skew vertices somehow (figure this one out or ask Oskar)
 
@@ -207,5 +249,6 @@ public class GridManager : MonoBehaviour
     {
         if(vertices != null) vertices.Clear();
         if(triangulation != null) triangulation.Clear();
+        if (shapes != null) shapes.Clear();
     }
 }

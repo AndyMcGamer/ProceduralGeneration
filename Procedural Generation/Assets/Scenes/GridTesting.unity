@@ -386,7 +386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numOfSides: 6
-  radius: 3
+  radius: 1
 --- !u!4 &1949174637
 Transform:
   m_ObjectHideFlags: 0

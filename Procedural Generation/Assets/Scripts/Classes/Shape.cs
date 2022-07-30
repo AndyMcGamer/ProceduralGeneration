@@ -5,6 +5,8 @@ namespace Classes
 {
     public interface IShapeObject
     {
+        public Vector3[] GetVertices();
 
+        public Edge[] GetEdges();
     }
 }

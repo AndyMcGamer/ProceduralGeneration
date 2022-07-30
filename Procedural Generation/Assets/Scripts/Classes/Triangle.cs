@@ -100,6 +100,16 @@ namespace Classes
             return false;
         }
 
+        public Vector3[] GetVertices()
+        {
+            return vertices;
+        }
+
+        public Edge[] GetEdges()
+        {
+            return edges;
+        }
+
         public static Edge GetSharedEdge(Triangle t1, Triangle t2)
         {
             Vector3[] shared = t1.vertices.Intersect(t2.vertices).ToArray();

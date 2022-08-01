@@ -8,5 +8,9 @@ namespace Classes
         public Vector3[] GetVertices();
 
         public Edge[] GetEdges();
+
+        public Vector3 GetCenter();
+
+        public Vector3[] GetMidpoints();
     }
 }

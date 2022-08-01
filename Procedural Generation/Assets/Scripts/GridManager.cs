@@ -11,9 +11,12 @@ public class GridManager : MonoBehaviour
 
     private float sideLength;
 
-    private List<Vector3> vertices;
+    private HashSet<Vector3> vertices;
     private List<Triangle> triangulation;
-    private List<IShapeObject> shapes;
+    private HashSet<IShapeObject> shapes;
+    private HashSet<Quad> subdivision;
+
+    private int drawMode = 0;
 
     private void OnDrawGizmos()
     {
@@ -25,28 +28,52 @@ public class GridManager : MonoBehaviour
             Gizmos.DrawSphere(pos, 0.05f);
 
         }
-        if (triangulation == null || triangulation.Count < 1) return;
-        foreach (Triangle triangle in triangulation)
+        switch (drawMode)
         {
-            foreach (Edge edge in triangle.edges)
-            {
-                Gizmos.DrawLine(edge.vertices[0], edge.vertices[1]);
-            }
+            case 1:
+                if (triangulation == null) break;
+                foreach (Triangle triangle in triangulation)
+                {
+                    foreach (Edge edge in triangle.edges)
+                    {
+                        Gizmos.DrawLine(edge.vertices[0], edge.vertices[1]);
+                    }
+                }
+                break;
+            case 2:
+                if (shapes == null) break;
+                foreach (IShapeObject shape in shapes)
+                {
+                    foreach (Edge edge in shape.GetEdges())
+                    {
+                        Gizmos.DrawLine(edge.vertices[0], edge.vertices[1]);
+                    }
+                }
+                break;
+            case 3:
+                if (subdivision == null) break;
+                foreach (Quad quad in subdivision)
+                {
+                    foreach (Edge edge in quad.GetEdges())
+                    {
+                        Gizmos.DrawLine(edge.vertices[0], edge.vertices[1]);
+                    }
+                }
+                break;
+            default:
+                break;
         }
-        if (shapes == null || shapes.Count < 1 ) return;
-        foreach (IShapeObject shape in shapes)
-        {
-            foreach (Edge edge in shape.GetEdges())
-            {
-                Gizmos.DrawLine(edge.vertices[0], edge.vertices[1]);
-            }
-        }
+        
+        
+        
     }
 
     // Generate Vertices In Shape
 
     public void DrawVertices()
     {
+        System.Diagnostics.Stopwatch sw = new();
+        sw.Start();
         vertices = new();
         Vector3 offset;
         Vector3 currentPos;
@@ -101,15 +128,19 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+        sw.Stop();
+        Debug.Log(sw.ElapsedMilliseconds);
     }
 
     // Delaunay Triangulation with Bowyer-Watson Algorithm
 
     public void Triangulate()
     {
-        triangulation = new();
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        drawMode = 1;
+
+        System.Diagnostics.Stopwatch sw = new();
         sw.Start();
+        triangulation = new();
         Triangle superTriangle = CalculateSuperTriangle();
         triangulation.Add(superTriangle);
         foreach (Vector3 point in vertices)
@@ -122,6 +153,7 @@ public class GridManager : MonoBehaviour
                     badTriangles.Add(triangle);
                 }
             }
+            
             List<Edge> polygonHole = new();
             foreach (Triangle badTriangle in badTriangles)
             {
@@ -197,6 +229,8 @@ public class GridManager : MonoBehaviour
     // Inventing new words lol "Quadrilaterate"
     public void Quadrilaterate()
     {
+        drawMode = 2;
+
         System.Diagnostics.Stopwatch sw = new();
         sw.Start();
 
@@ -217,7 +251,7 @@ public class GridManager : MonoBehaviour
                 continue;
             }
             Triangle t = adjList[rng.Next(adjList.Count)];
-            shapes.Add(new Quad(tri, t));
+            shapes.Add(new Quad(t, tri));
             foreach (Triangle triangle in adjList)
             {
                 triangle.adjacencyList.Remove(tri);
@@ -239,16 +273,45 @@ public class GridManager : MonoBehaviour
 
     // Subdivide quads and triangles
     // Make center vertex, draw segments from midpoints of edges to center
+    public void Subdivide()
+    {
+        drawMode = 3;
+        // Use HashSet
+        System.Diagnostics.Stopwatch sw = new();
+        sw.Start();
+        subdivision = new();
+        foreach (IShapeObject shape in shapes)
+        {
+            Vector3[] midpts = shape.GetMidpoints();
+            Vector3[] verts = shape.GetVertices();
+            Vector3 center = shape.GetCenter();
+            int numQuads = midpts.Length;
+            for (int i = 0; i < numQuads; i++)
+            {
+                subdivision.Add(new Quad(new Vector3[] { verts[i], midpts[i], center, midpts[(i + (numQuads-1)) % numQuads] }));
+            }
+            
+        }
+        
+        sw.Stop();
+        Debug.Log(sw.ElapsedMilliseconds);
+    }
 
+    // Skew vertices
+    // https://andersource.dev/2020/11/06/organic-grid.html
 
-
-    // Skew vertices somehow (figure this one out or ask Oskar)
-
+    // Make Dual Grid
+    // Grid for placement is based on midpoints of shapes
+    // Other grid is based on vertices of shapes (This one is actually drawn)
 
     public void Clear()
     {
         if(vertices != null) vertices.Clear();
         if(triangulation != null) triangulation.Clear();
         if (shapes != null) shapes.Clear();
+        if (subdivision != null) subdivision.Clear();
+        drawMode = 0;
     }
+
+    
 }

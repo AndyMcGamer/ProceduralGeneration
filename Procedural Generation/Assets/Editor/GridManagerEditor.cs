@@ -50,6 +50,13 @@ public class GridManagerEditor : Editor
 
         EditorGUILayout.Space();
 
+        if (GUILayout.Button("Subdivide"))
+        {
+            gridManager.Subdivide();
+        }
+
+        EditorGUILayout.Space();
+
         if (GUILayout.Button("Clear Gizmos"))
         {
             gridManager.Clear();

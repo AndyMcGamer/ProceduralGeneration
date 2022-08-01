@@ -23,6 +23,7 @@ namespace Classes
             edges[0] = new Edge(vertices[0], vertices[1]);
             edges[1] = new Edge(vertices[1], vertices[2]);
             edges[2] = new Edge(vertices[2], vertices[0]);
+            //CalculateCircumcenterAndRadius();
         }
 
         public Triangle(Vector3 v1, Vector3 v2, Vector3 v3)
@@ -36,7 +37,7 @@ namespace Classes
             edges[0] = new Edge(vertices[0], vertices[1]);
             edges[1] = new Edge(vertices[1], vertices[2]);
             edges[2] = new Edge(vertices[2], vertices[0]);
-
+            //CalculateCircumcenterAndRadius();
         }
 
         //private void CalculateCircumcenterAndRadius()
@@ -65,12 +66,12 @@ namespace Classes
 
         // Pre computing circumradius and circumcenter yields marginal improvement (30ms with 20 sides and radius of 10)
         // At large values of n, the method of computing circumcenter is inaccurate and the same speed (or even slower) compared to the typical method
-        
-        //public bool BetterInCircumcenter(Vector3 point) 
+
+        //public bool BetterInCircumcenter(Vector3 point)
         //{
         //    return (circumcenter - point).sqrMagnitude <= circumradius;
         //}
-        
+
         public bool InCircumcenter(Vector3 point)
         {
             // get difference between vertices and point (vertices must be ccw)
@@ -100,6 +101,11 @@ namespace Classes
             return false;
         }
 
+        public Vector3 GetCentroid()
+        {
+            return new Vector3((vertices[0].x + vertices[1].x + vertices[2].x) / 3f, 0f, (vertices[0].z + vertices[1].z + vertices[2].z) / 3f);
+        }
+
         public Vector3[] GetVertices()
         {
             return vertices;
@@ -109,10 +115,45 @@ namespace Classes
         {
             return edges;
         }
+        
+        public Vector3 GetCenter()
+        {
+            float mx1 = (vertices[1].x + vertices[0].x) / 2f;
+            float my1 = (vertices[1].z + vertices[0].z) / 2f;
+            float a1 = vertices[1].x - vertices[0].x;
+            float b1 = vertices[1].z - vertices[0].z;
+            float c1 = a1 * mx1 + b1 * my1;
+
+            float mx2 = (vertices[1].x + vertices[2].x) / 2f;
+            float my2 = (vertices[1].z + vertices[2].z) / 2f;
+            float a2 = vertices[2].x - vertices[1].x;
+            float b2 = vertices[2].z - vertices[1].z;
+            float c2 = a2 * mx2 + b2 * my2;
+
+            // Use Cramers Rule
+
+            float det = (a1 * b2) - (a2 * b1);
+            float xDet = (c1 * b2) - (c2 * b1);
+            float yDet = (a1 * c2) - (a2 * c1);
+
+            return new Vector3(xDet / det, 0, yDet / det);
+        }
+
+        public Vector3[] GetMidpoints()
+        {
+            Vector3[] midpoints = new Vector3[3];
+            for (int i = 0; i < 3; i++)
+            {
+                Edge e = edges[i];
+                midpoints[i] = new Vector3((e.vertices[0].x + e.vertices[1].x) / 2f,0, (e.vertices[0].z + e.vertices[1].z) / 2f);
+            }
+            return midpoints;
+        }
 
         public static Edge GetSharedEdge(Triangle t1, Triangle t2)
         {
             Vector3[] shared = t1.vertices.Intersect(t2.vertices).ToArray();
+
             if (shared.Length == 2)
             {
                 return new Edge(shared);

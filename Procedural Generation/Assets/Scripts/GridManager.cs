@@ -8,6 +8,7 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] private int numOfSides = 3;
     [SerializeField] private int radius = 1;
+    [SerializeField] private float squareRadius = 0f;
 
     private float sideLength;
 
@@ -289,6 +290,8 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i < numQuads; i++)
             {
                 subdivision.Add(new Quad(new Vector3[] { verts[i], midpts[i], center, midpts[(i + (numQuads-1)) % numQuads] }));
+                //Debug.Log($"{verts[i]}, {midpts[i]}, {center}, {midpts[(i + (numQuads - 1)) % numQuads]}");
+
             }
             
         }
@@ -299,6 +302,85 @@ public class GridManager : MonoBehaviour
 
     // Skew vertices
     // https://andersource.dev/2020/11/06/organic-grid.html
+
+    // Use formula to calculate for each quad how much each vertex should be shifted for perfect square
+    // Add to dictionary < vector3, list<vector3> > as a hash table sort of thing
+    // For each vertex there should be a list of vector3 "forces" 
+    // Sum up forces and average them out for final vertex location
+    // POSSIBLE: repeat multiple times
+
+    // Then, take each quad from subdivision, alter vertices so that the vertices are the right location
+    // clear main vertices list, and foreach vertex in final vertices add to vertices
+
+    public void RelaxVertices()
+    {
+        System.Diagnostics.Stopwatch sw = new();
+        Dictionary<Vector3, List<Vector3>> vertexForces = new();
+        foreach (Quad quad in subdivision)
+        {
+            Vector3[] verts = quad.GetVertices();
+            Vector3 center = quad.GetCenter();
+            float alpha = Mathf.Atan((verts[0].z + verts[1].x - verts[2].z - verts[3].x) / (verts[0].x - verts[1].z - verts[2].x + verts[3].z));
+            float k = (2 * squareRadius * Mathf.Cos(alpha) * (verts[0].x - verts[1].z - verts[2].x + verts[3].z) + 2 * squareRadius * Mathf.Sin(alpha) * (verts[0].z + verts[1].x - verts[2].z - verts[3].x)) > 0 ? 0 : Mathf.PI;
+            alpha += k;
+
+            Vector3[] squareVerts = new Vector3[4];
+            squareVerts[0] = center + new Vector3(squareRadius * Mathf.Cos(alpha), 0, squareRadius * Mathf.Sin(alpha));
+            squareVerts[1] = center + new Vector3(squareRadius * Mathf.Sin(alpha), 0, -squareRadius * Mathf.Cos(alpha));
+            squareVerts[2] = center + new Vector3(-squareRadius * Mathf.Cos(alpha), 0, -squareRadius * Mathf.Sin(alpha));
+            squareVerts[3] = center + new Vector3(-squareRadius * Mathf.Sin(alpha), 0, squareRadius * Mathf.Cos(alpha));
+
+            int index = 0;
+            float minDist = Vector3.Distance(verts[0], squareVerts[0]);
+            for (int i = 1; i < 3; i++)
+            {
+                float dist = Vector3.Distance(verts[i], squareVerts[0]);
+                if(dist < minDist)
+                {
+                    index = i;
+                }
+            }
+
+            // Looping through verts in order
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 originalVertex = verts[(i + index) % 4];
+                float dist = Vector3.Distance(squareVerts[i], originalVertex);
+                Vector3 newVertex = center + dist * squareVerts[i].normalized;
+
+                if (vertexForces.ContainsKey(originalVertex))
+                {
+                    vertexForces[originalVertex].Add(newVertex - originalVertex);
+                }
+                else
+                {
+                    vertexForces.Add(originalVertex, new List<Vector3>(4) { newVertex - originalVertex });
+                }
+            }
+
+            
+        }
+
+        HashSet<Vector3> copy = new(vertices);
+        vertices.Clear();
+        foreach (Vector3 vertex in copy)
+        {
+            Vector3 vertexForce = Vector3.zero;
+            for (int i = 0; i < vertexForces[vertex].Count; ++i)
+            {
+                vertexForce += vertexForces[vertex][i];
+            }
+            vertexForce /= vertexForces[vertex].Count;
+            vertices.Add(vertex + vertexForce);
+
+        }
+
+
+        sw.Stop();
+        Debug.Log(sw.ElapsedMilliseconds);
+
+    }
+
 
     // Make Dual Grid
     // Grid for placement is based on midpoints of shapes

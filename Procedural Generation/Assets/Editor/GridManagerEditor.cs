@@ -11,6 +11,7 @@ public class GridManagerEditor : Editor
 
     private SerializedProperty numOfSides;
     private SerializedProperty radius;
+    private SerializedProperty squareRadius;
 
 
     private void OnEnable()
@@ -18,6 +19,7 @@ public class GridManagerEditor : Editor
         gridManager = (GridManager)target;
         numOfSides = serializedObject.FindProperty("numOfSides");
         radius = serializedObject.FindProperty("radius");
+        squareRadius = serializedObject.FindProperty("squareRadius");
     }
 
     public override void OnInspectorGUI()
@@ -53,6 +55,18 @@ public class GridManagerEditor : Editor
         if (GUILayout.Button("Subdivide"))
         {
             gridManager.Subdivide();
+        }
+
+        EditorGUILayout.Space();
+
+        EditorGUILayout.Slider(squareRadius, 0f, 1f);
+        serializedObject.ApplyModifiedProperties();
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Relax"))
+        {
+            gridManager.RelaxVertices();
         }
 
         EditorGUILayout.Space();

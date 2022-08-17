@@ -21,14 +21,16 @@ public class GridManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (vertices == null) return;
-        if (vertices.Count < 1) return;
         Gizmos.color = Color.black;
-        foreach (var pos in vertices)
+        if (!(vertices == null) && vertices.Count > 0)
         {
-            Gizmos.DrawSphere(pos, 0.05f);
+            foreach (var pos in vertices)
+            {
+                Gizmos.DrawSphere(pos, 0.05f);
 
+            }
         }
+        
         switch (drawMode)
         {
             case 1:
@@ -315,6 +317,7 @@ public class GridManager : MonoBehaviour
     public void RelaxVertices()
     {
         System.Diagnostics.Stopwatch sw = new();
+        drawMode = 3;
         Dictionary<Vector3, List<Vector3>> vertexForces = new();
         foreach (Quad quad in subdivision)
         {
@@ -341,12 +344,15 @@ public class GridManager : MonoBehaviour
                 }
             }
 
-            // Looping through verts in order
+            // Looping through verts to calculate vertex forces
             for (int i = 0; i < 4; i++)
             {
                 Vector3 originalVertex = verts[(i + index) % 4];
-                float dist = Vector3.Distance(squareVerts[i], originalVertex);
-                Vector3 newVertex = center + dist * squareVerts[i].normalized;
+                //float dist = Vector3.Distance(squareVerts[i], originalVertex);
+                //Vector3 newVertex = center + dist * squareVerts[i].normalized;
+
+
+                Vector3 newVertex = squareVerts[i];
 
                 if (vertexForces.ContainsKey(originalVertex))
                 {
@@ -361,20 +367,39 @@ public class GridManager : MonoBehaviour
             
         }
 
-        HashSet<Vector3> copy = new(vertices);
+        //HashSet<Vector3> copy = new(vertices);
         vertices.Clear();
-        foreach (Vector3 vertex in copy)
+        //foreach (Vector3 vertex in copy)
+        //{
+        //    Vector3 vertexForce = Vector3.zero;
+        //    for (int i = 0; i < vertexForces[vertex].Count; ++i)
+        //    {
+        //        vertexForce += vertexForces[vertex][i];
+        //    }
+        //    vertexForce /= vertexForces[vertex].Count;
+        //    vertexForces[vertex][0] = vertexForce;
+        //    vertices.Add(vertex + vertexForce);
+
+        //}
+
+        
+        foreach (Vector3 vector in vertexForces.Keys)
         {
             Vector3 vertexForce = Vector3.zero;
-            for (int i = 0; i < vertexForces[vertex].Count; ++i)
+            foreach (Vector3 vert in vertexForces[vector])
             {
-                vertexForce += vertexForces[vertex][i];
+                vertexForce += vert;
             }
-            vertexForce /= vertexForces[vertex].Count;
-            vertices.Add(vertex + vertexForce);
-
+            vertexForce /= vertexForces[vector].Count;
+            vertexForces[vector][0] = vertexForce;
         }
 
+        foreach (Quad quad in subdivision)
+        {
+            Vector3[] qVerts = quad.GetVertices();
+            Vector3 center = quad.GetCenter();
+            quad.ResetVerts(new Vector3[] { qVerts[0] + vertexForces[qVerts[0]][0], qVerts[1] + vertexForces[qVerts[1]][0], qVerts[2] + vertexForces[qVerts[2]][0], qVerts[3] + vertexForces[qVerts[3]][0] });
+        }
 
         sw.Stop();
         Debug.Log(sw.ElapsedMilliseconds);

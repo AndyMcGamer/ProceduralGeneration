@@ -26,6 +26,12 @@ public class Quad : IShapeObject
         edges = new Edge[4] { new Edge(vertices[0], vertices[1]), new Edge(vertices[1], vertices[2]), new Edge(vertices[2], vertices[3]), new Edge(vertices[3], vertices[0]) };
     }
 
+    public void ResetVerts(Vector3[] vertices)
+    {
+        this.vertices = vertices;
+        edges = new Edge[4] { new Edge(vertices[0], vertices[1]), new Edge(vertices[1], vertices[2]), new Edge(vertices[2], vertices[3]), new Edge(vertices[3], vertices[0]) };
+    }
+
     // https://math.stackexchange.com/questions/1889173/point-that-divides-a-quadrilateral-into-four-quadrilaterals-of-equal-area
     // Get point of intersection of diagonals, then reflect that point about the centroid
     public Vector3 GetCenter()

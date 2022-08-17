@@ -386,7 +386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numOfSides: 6
-  radius: 8
+  radius: 5
   squareRadius: 0.06
 --- !u!4 &1949174637
 Transform:

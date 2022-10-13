@@ -7,6 +7,9 @@ In the talk, he shows the process of creating one chunk of this organic grid:
 4. Subdivide the quads and triangles into 4 smaller quads
 5. Try to "relax" the vertices of these quads and make each one more "square"
 
+Here is the algorithm that Oskar uses in action:
+![Imgur](https://i.imgur.com/2PwGKGh.gifv)
+
 Now, Oskar uses hexagons as they are very symmetrical and work out really well with the triangles all being equilateral and whatnot
 But I wondered what it would look like for other polygons like pentagons or squares or heptagons or even dodecagons and so I sought out to create these organic grids with these polygons and compare with hexagons.
 

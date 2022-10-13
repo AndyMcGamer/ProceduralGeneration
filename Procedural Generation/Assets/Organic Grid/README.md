@@ -21,12 +21,18 @@ The process I used to create these grids was slightly different from Oskar's:
 
 ![Imgur](https://i.imgur.com/BvuzxS8.png)
 
-1. Then, I implemented the [Bowyer-Watson Algorithm for Delaunay Triangulation](https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm) to triangulate the n-gon
-  * Here's the triangulation of a pentagon: ![Imgur](https://i.imgur.com/i4PNKFC.png)
-  * And here's a nonagon: ![Imgur](https://i.imgur.com/3fNwsjO.png)
-2. Join at random some of the triangles into quadrilaterals
-3. Subdivide the quads and triangles into 4 smaller quads
-4. Relax the vertices of the quads to reveal the final result
+2. Then, I implemented the [Bowyer-Watson Algorithm for Delaunay Triangulation](https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm) to triangulate the n-gon
+  * Here's the triangulation of a pentagon: 
+
+  ![Imgur](https://i.imgur.com/i4PNKFC.png)
+  
+  * And here's a nonagon: 
+
+  ![Imgur](https://i.imgur.com/3fNwsjO.png)
+  
+3. Join at random some of the triangles into quadrilaterals
+4. Subdivide the quads and triangles into 4 smaller quads
+5. Relax the vertices of the quads to reveal the final result
    * Now for the actual relaxation algorithm, I decided to take a different approach from Oskar, who used an iterative approach
    * Instead, I took reference from [this really neat article](https://andersource.dev/2020/11/06/organic-grid.html) by [Daniel Anderson](https://andersource.dev/) which uses a constrait-based calculus approach that makes a lot more sense to me.
    * In essence, we define inside each quad a set of vertices that make a square with a predefined side length. Let's call them "square vertices"
@@ -41,23 +47,37 @@ Unsuprisingly, the most visually pleasing grids were the ones where I start with
 
 But, there were still some close contenders. I was happy to find that heptagons, octagons and even nonagons yielded pleasurable results. I realized that as I increased the number of sides, mainly it just became more circular. 
 
-Heptagon: ![Imgur](https://i.imgur.com/TJ0TZSW.png)
+Heptagon: 
 
-Octagon: ![Imgur](https://i.imgur.com/lmFe7Kj.png)
+![Imgur](https://i.imgur.com/TJ0TZSW.png)
 
-Nonagon: ![Imgur](https://i.imgur.com/F1isOJ5.png)
+Octagon: 
+
+![Imgur](https://i.imgur.com/lmFe7Kj.png)
+
+Nonagon: 
+
+![Imgur](https://i.imgur.com/F1isOJ5.png)
 
 It kind of worked for a decagon too, but looking at a 20-gon we can see some clear issues as we increase size. It's still cool to look at though!
 
-Decagon: ![Imgur](https://i.imgur.com/kOlOtYB.png)
+Decagon: 
 
-20-Gon: ![Imgur](https://i.imgur.com/pEEnpg4.png)
+![Imgur](https://i.imgur.com/kOlOtYB.png)
+
+20-Gon: 
+
+![Imgur](https://i.imgur.com/pEEnpg4.png)
 
 On the flip side, there were also some pretty cool results for the square and pentagon. I'd say overall these are pretty viable in terms of a grid.
 
-Square: ![Imgur](https://i.imgur.com/vcrO2iZ.png)
+Square: 
 
-Pentagon: ![Imgur](https://i.imgur.com/qEVfQms.png)
+![Imgur](https://i.imgur.com/vcrO2iZ.png)
+
+Pentagon: 
+
+![Imgur](https://i.imgur.com/qEVfQms.png)
 
 Anything less than a square or more than 10 sides seems to be too skewed for it to work feasibly as a reliable organic grid system, though perhaps you could perform the relaxation multiple times and maybe it'll improve. Of course, it's also interesting to perhaps explore the possibilities of having more wonky figures with these irregular n-gon grids, especially when n increases.
 

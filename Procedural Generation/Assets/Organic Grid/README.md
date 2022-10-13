@@ -19,16 +19,16 @@ The process I used to create these grids was slightly different from Oskar's:
 1. Create a locus of points in the shape of the n-gon. 
    * To accomplish this, I looped r times (r is the radius) and created larger and larger polygons like how it's shown here
 
-![Imgur](https://i.imgur.com/BvuzxS8.png)
+     ![Imgur](https://i.imgur.com/BvuzxS8.png)
 
 2. Then, I implemented the [Bowyer-Watson Algorithm for Delaunay Triangulation](https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm) to triangulate the n-gon
-  * Here's the triangulation of a pentagon: 
+   * Here's the triangulation of a pentagon: 
 
-  ![Imgur](https://i.imgur.com/i4PNKFC.png)
+     ![Imgur](https://i.imgur.com/i4PNKFC.png)
   
-  * And here's a nonagon: 
+   * And here's a nonagon: 
 
-  ![Imgur](https://i.imgur.com/3fNwsjO.png)
+     ![Imgur](https://i.imgur.com/3fNwsjO.png)
   
 3. Join at random some of the triangles into quadrilaterals
 4. Subdivide the quads and triangles into 4 smaller quads

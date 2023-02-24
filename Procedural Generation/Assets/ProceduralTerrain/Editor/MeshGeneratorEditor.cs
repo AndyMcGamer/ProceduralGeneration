@@ -14,19 +14,13 @@ public class MeshGeneratorEditor : Editor
         {
             if(meshDisplayer.autoUpdate)
             {
-                meshDisplayer.GenerateMesh();
+                meshDisplayer.Generate();
             }
-        }
-
-        //base.OnInspectorGUI();
-        if(GUILayout.Button("Calc Height Map"))
-        {
-            meshDisplayer.CalculateHeightMap();
         }
 
         if (GUILayout.Button("Generate"))
         {
-            meshDisplayer.GenerateMesh();
+            meshDisplayer.Generate();
         }
     }
 }

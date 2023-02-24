@@ -3,77 +3,81 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(GridManager))]
-[CanEditMultipleObjects]
-public class GridManagerEditor : Editor
+namespace Organic
 {
-    GridManager gridManager;
 
-    private SerializedProperty numOfSides;
-    private SerializedProperty radius;
-    private SerializedProperty squareRadius;
-
-
-    private void OnEnable()
+    [CustomEditor(typeof(GridManager))]
+    [CanEditMultipleObjects]
+    public class GridManagerEditor : Editor
     {
-        gridManager = (GridManager)target;
-        numOfSides = serializedObject.FindProperty("numOfSides");
-        radius = serializedObject.FindProperty("radius");
-        squareRadius = serializedObject.FindProperty("squareRadius");
-    }
+        GridManager gridManager;
 
-    public override void OnInspectorGUI()
-    {
-        serializedObject.Update();
-        EditorGUILayout.IntSlider(numOfSides, 3, 30);
-        EditorGUILayout.IntSlider(radius, 1, 15);
-        serializedObject.ApplyModifiedProperties();
+        private SerializedProperty numOfSides;
+        private SerializedProperty radius;
+        private SerializedProperty squareRadius;
 
-        EditorGUILayout.Space();
 
-        if(GUILayout.Button("Draw Vertices"))
+        private void OnEnable()
         {
-            gridManager.DrawVertices();
+            gridManager = (GridManager)target;
+            numOfSides = serializedObject.FindProperty("numOfSides");
+            radius = serializedObject.FindProperty("radius");
+            squareRadius = serializedObject.FindProperty("squareRadius");
         }
 
-        EditorGUILayout.Space();
-
-        if (GUILayout.Button("Triangulate"))
+        public override void OnInspectorGUI()
         {
-            gridManager.Triangulate();
-        }
+            serializedObject.Update();
+            EditorGUILayout.IntSlider(numOfSides, 3, 30);
+            EditorGUILayout.IntSlider(radius, 1, 15);
+            serializedObject.ApplyModifiedProperties();
 
-        EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
-        if (GUILayout.Button("Quadrilaterate"))
-        {
-            gridManager.Quadrilaterate();
-        }
+            if (GUILayout.Button("Draw Vertices"))
+            {
+                gridManager.DrawVertices();
+            }
 
-        EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
-        if (GUILayout.Button("Subdivide"))
-        {
-            gridManager.Subdivide();
-        }
+            if (GUILayout.Button("Triangulate"))
+            {
+                gridManager.Triangulate();
+            }
 
-        EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
-        EditorGUILayout.Slider(squareRadius, 0f, 1f);
-        serializedObject.ApplyModifiedProperties();
+            if (GUILayout.Button("Quadrilaterate"))
+            {
+                gridManager.Quadrilaterate();
+            }
 
-        EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
-        if (GUILayout.Button("Relax"))
-        {
-            gridManager.RelaxVertices();
-        }
+            if (GUILayout.Button("Subdivide"))
+            {
+                gridManager.Subdivide();
+            }
 
-        EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
-        if (GUILayout.Button("Clear Gizmos"))
-        {
-            gridManager.Clear();
+            EditorGUILayout.Slider(squareRadius, 0f, 1f);
+            serializedObject.ApplyModifiedProperties();
+
+            EditorGUILayout.Space();
+
+            if (GUILayout.Button("Relax"))
+            {
+                gridManager.RelaxVertices();
+            }
+
+            EditorGUILayout.Space();
+
+            if (GUILayout.Button("Clear Gizmos"))
+            {
+                gridManager.Clear();
+            }
         }
     }
 }

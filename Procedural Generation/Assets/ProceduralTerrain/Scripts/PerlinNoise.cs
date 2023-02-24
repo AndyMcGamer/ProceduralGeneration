@@ -4,15 +4,18 @@ using UnityEngine;
 
 public static class PerlinNoise 
 {
-    public static float[][] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset)
+    public static float[][] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistence, float lacunarity, Vector2 offset)
     {
-        System.Random r = new System.Random(seed);
+        System.Random r = new(seed);
+        float amp, freq;
         Vector2[] octaveOffsets = new Vector2[octaves];
         for (int i = 0; i < octaves; i++)
         {
             octaveOffsets[i] = new Vector2(r.Next(-100000, 1000000) + offset.x, r.Next(-100000, 1000000) + offset.y);
+            
         }
 
+        
         float minHeight = float.MaxValue;
         float maxHeight = float.MinValue;
 
@@ -30,8 +33,8 @@ public static class PerlinNoise
         {
             for (int x = 0; x < mapWidth; x++)
             {
-                float amp = 1;
-                float freq = 1;
+                amp = 1;
+                freq = 1;
                 float noiseHeight = 0;
 
                 for (int i = 0; i < octaves; i++)
@@ -42,7 +45,7 @@ public static class PerlinNoise
                     float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
                     noiseHeight += perlinValue * amp;
 
-                    amp *= persistance;
+                    amp *= persistence;
                     freq *= lacunarity;
 
                 }
@@ -56,6 +59,8 @@ public static class PerlinNoise
                 }
                 
                 noiseMap[y][x] = noiseHeight;
+
+                
             }
         }
 
@@ -69,4 +74,11 @@ public static class PerlinNoise
 
         return noiseMap;
     }
+}
+
+public struct HeightMapData
+{
+    public float[][] heightMap;
+    public float minHeight;
+    public float maxHeight;
 }

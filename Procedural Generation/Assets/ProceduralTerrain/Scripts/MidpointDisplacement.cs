@@ -18,6 +18,21 @@ public static class MidpointDisplacement
         return heightmap;
     }
 
+    public static float[][] GenerateMidpointDisplacement(int chunksize, MidpointSettings settings)
+    {
+        float[][] heightmap = new float[chunksize + 1][];
+        for (int i = 0; i <= chunksize; i++)
+        {
+            heightmap[i] = new float[chunksize + 1];
+        }
+        System.Random r = new(settings.seed);
+        Displace(ref heightmap, chunksize, settings.roughness, r);
+
+        Normalize(ref heightmap, settings.heightBounds.x, settings.heightBounds.y);
+
+        return heightmap;
+    }
+
 
     private static void Displace(ref float[][] heightmap, int chunksize, float roughness, System.Random r)
     {

@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum NormalizeMode
+{
+    Local,
+    Global
+}
 public static class PerlinNoise 
 {
     public static float[][] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistence, float lacunarity, Vector2 offset)
@@ -74,11 +79,78 @@ public static class PerlinNoise
 
         return noiseMap;
     }
+
+    public static float[][] GenerateNoiseMap(int mapWidth, int mapHeight, PerlinSettings settings, Vector2 sampleCenter)
+    {
+        System.Random r = new(settings.seed);
+        float amp, freq;
+        Vector2[] octaveOffsets = new Vector2[settings.octaves];
+        for (int i = 0; i < settings.octaves; i++)
+        {
+            octaveOffsets[i] = new Vector2(r.Next(-100000, 1000000) + sampleCenter.x + settings.offset.x, r.Next(-100000, 1000000) + sampleCenter.y + settings.offset.y);
+
+        }
+
+
+        float minHeight = float.MaxValue;
+        float maxHeight = float.MinValue;
+
+        float[][] noiseMap = new float[mapHeight][];
+
+        float halfWidth = mapWidth / 2f;
+        float halfHeight = mapHeight / 2f;
+
+
+        for (int i = 0; i < mapHeight; i++)
+        {
+            noiseMap[i] = new float[mapWidth];
+        }
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                amp = 1;
+                freq = 1;
+                float noiseHeight = 0;
+
+                for (int i = 0; i < settings.octaves; i++)
+                {
+                    float sampleX = (x - halfWidth) / settings.scale * freq + octaveOffsets[i].x * freq;
+                    float sampleY = (y - halfHeight) / settings.scale * freq + octaveOffsets[i].y * freq;
+
+                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+                    noiseHeight += perlinValue * amp;
+
+                    amp *= settings.persistence;
+                    freq *= settings.lacunarity;
+
+                }
+
+                if (noiseHeight > maxHeight)
+                {
+                    maxHeight = noiseHeight;
+                }
+                else if (noiseHeight < minHeight)
+                {
+                    minHeight = noiseHeight;
+                }
+
+                noiseMap[y][x] = noiseHeight;
+
+
+            }
+        }
+
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                noiseMap[y][x] = Mathf.InverseLerp(minHeight, maxHeight, noiseMap[y][x]);
+            }
+        }
+
+        return noiseMap;
+    }
 }
 
-public struct HeightMapData
-{
-    public float[][] heightMap;
-    public float minHeight;
-    public float maxHeight;
-}
+

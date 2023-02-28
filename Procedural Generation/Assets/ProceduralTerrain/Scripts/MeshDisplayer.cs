@@ -105,7 +105,8 @@ public class MeshDisplayer : MonoBehaviour
                 }
                 if (useFalloff)
                 {
-                    height = Mathf.Clamp01(height - fallOff[j][k]);
+                    height = Mathf.Clamp(0,height - fallOff[j][k], int.MaxValue);
+                    //height = Mathf.Clamp01(height - fallOff[j][k]);
                 }
                 //heightMap.heightMap[j][k] = meshHeightCurve.Evaluate(height) * heightMultiplier;
                 meshData.verts[vertIndex] = new Vector3(x, meshHeightCurve.Evaluate(height) * heightMultiplier, z);
@@ -128,7 +129,7 @@ public class MeshDisplayer : MonoBehaviour
             vert++;
         }
 
-        meshFilter.sharedMesh = meshData.CreateMesh();
+        meshFilter.mesh = meshData.CreateMesh();
     }
 
 
@@ -219,9 +220,11 @@ public class MeshDisplayer : MonoBehaviour
         }
         heightMap = new()
         {
-            heightMap = hmap,
-            minHeight = minVal / heightMultiplier,
-            maxHeight = maxVal / heightMultiplier
+            heightMap = map,
+            //minHeight = minVal / heightMultiplier,
+            //maxHeight = maxVal / heightMultiplier
+            minHeight = minVal,
+            maxHeight = maxVal
         };
     }
 
@@ -316,44 +319,5 @@ public class MeshDisplayer : MonoBehaviour
             vert++;
         }
         return triangles;
-    }
-}
-
-public class MeshData
-{
-    public Vector3[] verts;
-    public int[] triangles;
-    public Vector2[] uvs;
-
-    int triangleIndex;
-
-    public MeshData(int meshWidth, int meshHeight)
-    {
-        triangles = new int[meshWidth * meshHeight * 6];
-        triangleIndex = 0;
-        meshWidth++;
-        meshHeight++;
-        verts = new Vector3[meshWidth * meshHeight];
-        uvs = new Vector2[meshWidth * meshHeight];
-        
-    }
-    public void AddTriangle(int a, int b, int c)
-    {
-        triangles[triangleIndex] = a;
-        triangles[triangleIndex + 1] = b;
-        triangles[triangleIndex + 2] = c;
-        triangleIndex += 3;
-    }
-
-    public Mesh CreateMesh()
-    {
-        Mesh mesh = new()
-        {
-            vertices = verts,
-            triangles = triangles,
-            uv = uvs
-        };
-        mesh.RecalculateNormals();
-        return mesh;
     }
 }

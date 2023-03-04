@@ -12,12 +12,14 @@ public static class PerlinNoise
     public static float[][] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistence, float lacunarity, Vector2 offset)
     {
         System.Random r = new(seed);
-        float amp, freq;
+        float amp = 1, freq;
+        float maxPossibleHeight = 0;
         Vector2[] octaveOffsets = new Vector2[octaves];
         for (int i = 0; i < octaves; i++)
         {
             octaveOffsets[i] = new Vector2(r.Next(-100000, 1000000) + offset.x, r.Next(-100000, 1000000) + offset.y);
-            
+            maxPossibleHeight += amp;
+            amp *= persistence;
         }
 
         
@@ -65,17 +67,18 @@ public static class PerlinNoise
                 
                 noiseMap[y][x] = noiseHeight;
 
-                
+                float normalizedHeight = (noiseMap[y][x]+1) / (maxPossibleHeight / 0.9f);
+                noiseMap[y][x] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
             }
         }
 
-        for (int y = 0; y < mapHeight; y++)
-        {
-            for (int x = 0; x < mapWidth; x++)
-            {
-                noiseMap[y][x] = Mathf.InverseLerp(minHeight, maxHeight, noiseMap[y][x]);
-            }
-        }
+        //for (int y = 0; y < mapHeight; y++)
+        //{
+        //    for (int x = 0; x < mapWidth; x++)
+        //    {
+        //        noiseMap[y][x] = Mathf.InverseLerp(minHeight, maxHeight, noiseMap[y][x]);
+        //    }
+        //}
 
         return noiseMap;
     }
@@ -83,12 +86,14 @@ public static class PerlinNoise
     public static float[][] GenerateNoiseMap(int mapWidth, int mapHeight, PerlinSettings settings, Vector2 sampleCenter)
     {
         System.Random r = new(settings.seed);
-        float amp, freq;
+        float amp = 1, freq = 0;
+        float maxPossibleHeight = 0;
         Vector2[] octaveOffsets = new Vector2[settings.octaves];
         for (int i = 0; i < settings.octaves; i++)
         {
             octaveOffsets[i] = new Vector2(r.Next(-100000, 1000000) + sampleCenter.x + settings.offset.x, r.Next(-100000, 1000000) + sampleCenter.y + settings.offset.y);
-
+            maxPossibleHeight += amp;
+            amp *= settings.persistence;
         }
 
 
@@ -115,8 +120,8 @@ public static class PerlinNoise
 
                 for (int i = 0; i < settings.octaves; i++)
                 {
-                    float sampleX = (x - halfWidth) / settings.scale * freq + octaveOffsets[i].x * freq;
-                    float sampleY = (y - halfHeight) / settings.scale * freq + octaveOffsets[i].y * freq;
+                    float sampleX = (x - halfWidth + octaveOffsets[i].x) / settings.scale * freq;
+                    float sampleY = (y - halfHeight + octaveOffsets[i].y) / settings.scale * freq;
 
                     float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
                     noiseHeight += perlinValue * amp;
@@ -137,15 +142,23 @@ public static class PerlinNoise
 
                 noiseMap[y][x] = noiseHeight;
 
+                if(settings.mode == NormalizeMode.Global)
+                {
+                    float normalizedHeight = (noiseMap[y][x]+1) / (maxPossibleHeight / 0.9f);
+                    noiseMap[y][x] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
+                }
 
             }
         }
 
-        for (int y = 0; y < mapHeight; y++)
+        if (settings.mode == NormalizeMode.Local)
         {
-            for (int x = 0; x < mapWidth; x++)
+            for (int y = 0; y < mapHeight; y++)
             {
-                noiseMap[y][x] = Mathf.InverseLerp(minHeight, maxHeight, noiseMap[y][x]);
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    noiseMap[y][x] = Mathf.InverseLerp(minHeight, maxHeight, noiseMap[y][x]);
+                }
             }
         }
 

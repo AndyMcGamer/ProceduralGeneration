@@ -26,7 +26,7 @@ public class TerrainChunk
         this.heightmapSettings = heightmapSettings;
         this.meshSettings = meshSettings;
         
-        meshObject = new GameObject("Terrain Chunk");
+        meshObject = new GameObject($"Terrain Chunk {position.x}, {position.y}");
         meshRenderer = meshObject.AddComponent<MeshRenderer>();
         meshFilter = meshObject.AddComponent<MeshFilter>();
 

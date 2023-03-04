@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "Heightmap Settings", menuName = "New Heightmap Settings Object")]
 public class HeightMapSettings : UpdateableData
 {
     public bool useFalloff;

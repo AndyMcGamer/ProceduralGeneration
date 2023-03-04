@@ -247,9 +247,9 @@ public class MeshDisplayer : MonoBehaviour
         float minVal = float.MaxValue;
         float maxVal = float.MinValue;
 
-        for (int x = 0; x < cSize; x++)
+        for (int x = 0; x <= cSize; x++)
         {
-            for (int y = 0; y < cSize; y++)
+            for (int y = 0; y <= cSize; y++)
             {
                 map[y][x] *= meshHeightCurve.Evaluate(map[y][x]) * heightMultiplier;
 

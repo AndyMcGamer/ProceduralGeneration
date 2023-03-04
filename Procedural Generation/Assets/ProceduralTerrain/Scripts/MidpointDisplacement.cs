@@ -163,7 +163,7 @@ public static class MidpointDisplacement
         {
             for (int j = 0; j < map[0].Length; j++)
             {
-                map[i][j] = (map[i][j] - min)/(max- min) * (maxHeight - minHeight) + minHeight;
+                map[i][j] = Mathf.InverseLerp(min, max, map[i][j]) * (maxHeight - minHeight) + minHeight;
             }
         }
     }

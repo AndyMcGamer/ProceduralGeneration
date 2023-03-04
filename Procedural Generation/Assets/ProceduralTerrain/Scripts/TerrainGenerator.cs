@@ -5,8 +5,6 @@ using UnityEngine;
 public class TerrainGenerator : MonoBehaviour
 {
     public int mapSize;
-    public int chunkSize;
-
     public HeightMapSettings heightmapSettings;
     public MeshSettings meshSettings;
 
@@ -21,11 +19,16 @@ public class TerrainGenerator : MonoBehaviour
     public LODInfo[] detailLevels;
     public int lod;
 
+    public void ClearDictionary()
+    {
+        chunkDictionary.Clear();
+    }
+
     public void Generate()
     {
         if (heightmapSettings.useFalloff)
         {
-            falloffMap = FalloffGenerator.GenerateFalloffMap(chunkSize * mapSize, heightmapSettings.falloffBounds.x, heightmapSettings.falloffBounds.y);
+            falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffBounds.x, heightmapSettings.falloffBounds.y);
         }
         else
         {
@@ -33,7 +36,7 @@ public class TerrainGenerator : MonoBehaviour
         }
         if (heightmapSettings.useMidpoint)
         {
-            midpointMap = MidpointDisplacement.GenerateMidpointDisplacement(chunkSize * mapSize, heightmapSettings.midpointSettings);
+            midpointMap = MidpointDisplacement.GenerateMidpointDisplacement((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.midpointSettings);
         }
         else
         {
@@ -59,6 +62,7 @@ public class TerrainGenerator : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public class LODInfo
 {
     public int lod;

@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: StylizedWaterMat
+  m_Shader: {fileID: -6465566751694194690, guid: 4ea9106a8c6a68b4f8950e19e4e6d989,
+    type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3000
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _DepthDistance: 1
+    - _HorizonDistance: 5
+    - _QueueControl: 1
+    - _QueueOffset: 0
+    - _RefractionScale: 0.439
+    - _RefractionSpeed: 0.01
+    - _RefractionStrength: 0.0042
+    - _WaveLength: 1
+    - _WaveSpeed: 0.3
+    - _WaveSteepness: 0.7
+    m_Colors:
+    - _DeepColor: {r: 0, g: 0.09848648, b: 0.3584906, a: 1}
+    - _EndColor: {r: 0.023412976, g: 0.1689734, b: 0.7090783, a: 1}
+    - _HorizonColor: {r: 0.94509804, g: 0.09937067, b: 0, a: 0}
+    - _ShallowColor: {r: 0, g: 0.4084353, b: 0.754717, a: 0}
+    - _StartColor: {r: 0, g: 1.545098, b: 1.545098, a: 1}
+    - _WaveDirections: {r: 0, g: 0.5, b: 0.89, a: 0.2}
+  m_BuildTextureStacks: []
+--- !u!114 &7486227700859087042
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5

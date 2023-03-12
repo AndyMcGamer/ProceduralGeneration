@@ -28,7 +28,21 @@ public class TerrainGenerator : MonoBehaviour
     {
         if (heightmapSettings.useFalloff)
         {
-            falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffBounds.x, heightmapSettings.falloffBounds.y);
+            switch (heightmapSettings.falloffSettings.falloffMode)
+            {
+                case FalloffMode.Values:
+                    falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffValues.x, heightmapSettings.falloffSettings.falloffValues.y, meshSettings.scale);
+                    break;
+                case FalloffMode.Bounds:
+                    falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffBounds);
+                    break;
+                case FalloffMode.Curve:
+                    falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffCurve);
+                    break;
+                default:
+                    break;
+            }
+            
         }
         else
         {
@@ -36,7 +50,7 @@ public class TerrainGenerator : MonoBehaviour
         }
         if (heightmapSettings.useMidpoint)
         {
-            midpointMap = MidpointDisplacement.GenerateMidpointDisplacement((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.midpointSettings);
+            midpointMap = MidpointDisplacement.GenerateMidpointDisplacement((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.midpointSettings, mapSize);
         }
         else
         {
@@ -50,6 +64,7 @@ public class TerrainGenerator : MonoBehaviour
                 if (chunkDictionary.ContainsKey(coord))
                 {
                     chunkDictionary[coord].UpdateChunk(heightmapSettings, meshSettings, terrainMaterial);
+                    chunkDictionary[coord].LoadChunk(ref falloffMap, ref midpointMap, lod);
                 }
                 else
                 {

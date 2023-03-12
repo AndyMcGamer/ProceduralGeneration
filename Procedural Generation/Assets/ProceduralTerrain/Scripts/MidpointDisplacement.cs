@@ -5,10 +5,11 @@ public static class MidpointDisplacement
 {
     public static float[][] GenerateMidpointDisplacement(int chunksize, int seed, float roughness, float minHeight = 0f, float maxHeight = 1f)
     {
-        float[][] heightmap = new float[chunksize+1][];
-        for (int i = 0; i <= chunksize; i++)
+        int rectSize = NextPowerOfTwo(chunksize);
+        float[][] heightmap = new float[rectSize+1][];
+        for (int i = 0; i <= rectSize; i++)
         {
-            heightmap[i] = new float[chunksize + 1];
+            heightmap[i] = new float[rectSize + 1];
         }
         System.Random r = new(seed);
         Displace(ref heightmap, chunksize, roughness, r);
@@ -18,17 +19,18 @@ public static class MidpointDisplacement
         return heightmap;
     }
 
-    public static float[][] GenerateMidpointDisplacement(int chunksize, MidpointSettings settings)
+    public static float[][] GenerateMidpointDisplacement(int chunksize, MidpointSettings settings, int mapSize)
     {
-        float[][] heightmap = new float[chunksize + 1][];
-        for (int i = 0; i <= chunksize; i++)
+        int rectSize = NextPowerOfTwo(chunksize);
+        float[][] heightmap = new float[rectSize + 1][];
+        for (int i = 0; i <= rectSize; i++)
         {
-            heightmap[i] = new float[chunksize + 1];
+            heightmap[i] = new float[rectSize + 1];
         }
         System.Random r = new(settings.seed);
         Displace(ref heightmap, chunksize, settings.roughness, r);
 
-        Normalize(ref heightmap, settings.heightBounds.x, settings.heightBounds.y);
+        Normalize(ref heightmap, settings.heightBounds.x, settings.heightBounds.y, mapSize);
 
         return heightmap;
     }
@@ -140,7 +142,7 @@ public static class MidpointDisplacement
         return res;
     }
 
-    private static void Normalize(ref float[][] map, float minHeight, float maxHeight)
+    private static void Normalize(ref float[][] map, float minHeight, float maxHeight, int mapSize = 1)
     {
         float min = float.MaxValue;
         float max = float.MinValue;
@@ -158,6 +160,7 @@ public static class MidpointDisplacement
                 }
             }
         }
+
 
         for (int i = 0; i < map.Length; i++)
         {

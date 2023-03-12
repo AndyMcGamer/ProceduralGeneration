@@ -18,7 +18,7 @@ public class HeightMapSettings : UpdateableData
     [Range(0f, 1f)]
     public float midpointInfluence;
 
-    public Vector2 falloffBounds;
+    public FalloffSettings falloffSettings;
 
     public float MinHeight
     {
@@ -80,4 +80,13 @@ public class MidpointSettings
     {
         roughness = Mathf.Max(roughness, 0.001f);
     }
+}
+
+[System.Serializable]
+public class FalloffSettings
+{
+    public FalloffMode falloffMode;
+    public Vector2 falloffValues;
+    public Vector2 falloffBounds;
+    public AnimationCurve falloffCurve;
 }

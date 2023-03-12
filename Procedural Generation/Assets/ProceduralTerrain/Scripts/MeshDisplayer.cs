@@ -92,7 +92,8 @@ public class MeshDisplayer : MonoBehaviour
         int vertsPerLine = (chunkSize) / meshIncrement + 1;
         MeshData meshData = new(vertsPerLine, vertsPerLine);
 
-        float[][] fallOff = FalloffGenerator.GenerateFalloffMap(chunkSize, falloffParams.x, falloffParams.y);
+        //float[][] fallOff = FalloffGenerator.GenerateFalloffMap(chunkSize, falloffParams.x, falloffParams.y);
+        float[][] fallOff = FalloffGenerator.GenerateFalloffMap(chunkSize, falloffParams);
 
         for (int z = -Mathf.FloorToInt(chunkSize / 2), vertIndex = 0, j = 0; z <= chunkSize - Mathf.FloorToInt(chunkSize / 2); z+=meshIncrement)
         {
@@ -190,7 +191,8 @@ public class MeshDisplayer : MonoBehaviour
         }
         if(drawMode == DrawMode.DrawFalloff)
         {
-            float[][] falloffMap = FalloffGenerator.GenerateFalloffMap(chunkSize, falloffParams.x, falloffParams.y);
+            //float[][] falloffMap = FalloffGenerator.GenerateFalloffMap(chunkSize, falloffParams.x, falloffParams.y);
+            float[][] falloffMap = FalloffGenerator.GenerateFalloffMap(chunkSize, falloffParams);
             heightMap = new()
             {
                 heightMap = falloffMap,

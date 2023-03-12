@@ -27,6 +27,7 @@ public class TerrainChunk
         this.meshSettings = meshSettings;
         
         meshObject = new GameObject($"Terrain Chunk {position.x}, {position.y}");
+        meshObject.transform.localScale = Vector3.one * meshSettings.scale;
         meshRenderer = meshObject.AddComponent<MeshRenderer>();
         meshFilter = meshObject.AddComponent<MeshFilter>();
 

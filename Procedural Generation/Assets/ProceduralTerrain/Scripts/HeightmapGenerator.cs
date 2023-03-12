@@ -23,9 +23,9 @@ public static class HeightmapGenerator
                     int offset = mapSize / 2;
                     int xCoord = ((int)(position.x) + offset);
                     int yCoord = ((int)(position.y) + offset);
-                    xCoord *= chunkSize + 1;
-                    yCoord *= chunkSize + 1;
-                    heightmap[y][x] = Mathf.Lerp(heightmap[y][x], midpointMap[yCoord + y][xCoord + x], settings.midpointInfluence);
+                    xCoord *= chunkSize;
+                    yCoord *= chunkSize;
+                    heightmap[y][x] = Mathf.Lerp(heightmap[y][x], midpointMap[yCoord + y][xCoord + x] * 1.7f - 0.5f, settings.midpointInfluence);
                 }
                 if (settings.useFalloff)
                 {
@@ -33,13 +33,15 @@ public static class HeightmapGenerator
                     int offset = mapSize / 2;
                     int xCoord = ((int)(position.x) + offset);
                     int yCoord = ((int)(position.y) + offset);
-                    xCoord *= chunkSize + 1;
-                    yCoord *= chunkSize + 1;
+                    xCoord *= chunkSize;
+                    yCoord *= chunkSize;
                     heightmap[y][x] = Mathf.Clamp(heightmap[y][x] - falloffMap[yCoord + y][xCoord + x], 0, int.MaxValue);
+                    //heightmap[y][x] = Mathf.Clamp01(heightmap[y][x] - falloffMap[yCoord + y][xCoord + x]);
                 }
                 heightmap[y][x] *= settings.heightCurve.Evaluate(heightmap[y][x]) * settings.heightScale;
+                //heightmap[y][x] *= settings.heightScale;
 
-                if(heightmap[y][x] > maxVal)
+                if (heightmap[y][x] > maxVal)
                 {
                     maxVal = heightmap[y][x];
                 }

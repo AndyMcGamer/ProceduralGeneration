@@ -67,7 +67,7 @@ public static class PerlinNoise
                 
                 noiseMap[y][x] = noiseHeight;
 
-                float normalizedHeight = (noiseMap[y][x]+1) / (maxPossibleHeight / 0.9f);
+                float normalizedHeight = (noiseMap[y][x]+1) / (maxPossibleHeight/1.1f);
                 noiseMap[y][x] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
             }
         }
@@ -86,7 +86,7 @@ public static class PerlinNoise
     public static float[][] GenerateNoiseMap(int mapWidth, int mapHeight, PerlinSettings settings, Vector2 sampleCenter)
     {
         System.Random r = new(settings.seed);
-        float amp = 1, freq = 0;
+        float amp = 1, freq;
         float maxPossibleHeight = 0;
         Vector2[] octaveOffsets = new Vector2[settings.octaves];
         for (int i = 0; i < settings.octaves; i++)
@@ -144,7 +144,7 @@ public static class PerlinNoise
 
                 if(settings.mode == NormalizeMode.Global)
                 {
-                    float normalizedHeight = (noiseMap[y][x]+1) / (maxPossibleHeight / 0.9f);
+                    float normalizedHeight = (noiseMap[y][x]+1) / (maxPossibleHeight / 1.2f);
                     noiseMap[y][x] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
                 }
 

@@ -17,6 +17,10 @@ public class TerrainGeneratorEditor : Editor
         if (GUILayout.Button("Clear"))
         {
             terrainGenerator.ClearDictionary();
+            while(terrainGenerator.terrainContainer.childCount > 0)
+            {
+                DestroyImmediate(terrainGenerator.terrainContainer.GetChild(0).gameObject);
+            }
         }
     }
 }

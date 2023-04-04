@@ -4,13 +4,12 @@ using UnityEngine;
 
 public static class HeightmapGenerator 
 {
-    public static HeightMapData GenerateHeightmap(int chunkSize, HeightMapSettings settings, Vector2 sampleCenter, ref float[][] falloffMap, ref float[][] midpointMap)
+    public static HeightMapData GenerateHeightmap(int chunkSize, HeightMapSettings settings, Vector2 sampleCenter, float[][] falloffMap, float[][] midpointMap)
     {
         float[][] heightmap = PerlinNoise.GenerateNoiseMap(chunkSize+1, chunkSize+1, settings.perlinSettings, sampleCenter);
-        float minVal = float.MaxValue;
-        float maxVal = float.MinValue;
-
         Vector2 position = sampleCenter / chunkSize;
+
+        AnimationCurve curve = new(settings.heightCurve.keys);
 
         for (int y = 0; y <= chunkSize; y++)
         {
@@ -25,7 +24,8 @@ public static class HeightmapGenerator
                     int yCoord = ((int)(position.y) + offset);
                     xCoord *= chunkSize;
                     yCoord *= chunkSize;
-                    heightmap[y][x] = Mathf.Lerp(heightmap[y][x], midpointMap[yCoord + y][xCoord + x] * 1.7f - 0.5f, settings.midpointInfluence);
+                    heightmap[y][x] = Mathf.Lerp(heightmap[y][x], midpointMap[yCoord + y][xCoord + x], settings.midpointInfluence);
+                    //heightmap[y][x] = heightmap[y][x] + midpointMap[yCoord + y][xCoord + x];
                 }
                 if (settings.useFalloff)
                 {
@@ -38,25 +38,14 @@ public static class HeightmapGenerator
                     heightmap[y][x] = Mathf.Clamp(heightmap[y][x] - falloffMap[yCoord + y][xCoord + x], 0, int.MaxValue);
                     //heightmap[y][x] = Mathf.Clamp01(heightmap[y][x] - falloffMap[yCoord + y][xCoord + x]);
                 }
-                heightmap[y][x] *= settings.heightCurve.Evaluate(heightmap[y][x]) * settings.heightScale;
+                heightmap[y][x] = curve.Evaluate(heightmap[y][x]) * settings.heightScale;
                 //heightmap[y][x] *= settings.heightScale;
-
-                if (heightmap[y][x] > maxVal)
-                {
-                    maxVal = heightmap[y][x];
-                }
-                if(heightmap[y][x] < minVal)
-                {
-                    minVal = heightmap[y][x];
-                }
             }
         }
-
+        
         return new HeightMapData()
         {
             heightMap = heightmap,
-            maxHeight = maxVal,
-            minHeight = minVal
         };
     }
 }

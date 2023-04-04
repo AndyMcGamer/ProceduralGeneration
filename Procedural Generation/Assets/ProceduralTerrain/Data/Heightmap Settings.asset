@@ -19,14 +19,23 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.000025513116
-      value: -0.0054677986
+      time: 0
+      value: -0.05
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0.17078906
+    - serializedVersion: 3
+      time: 0.22502536
+      value: 0.033133876
+      inSlope: 0.11707629
+      outSlope: 0.11707629
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.1458906
     - serializedVersion: 3
       time: 0.8
       value: 0.55
@@ -37,35 +46,35 @@ MonoBehaviour:
       inWeight: 0.18612164
       outWeight: 0.27750513
     - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 2.8390784
-      outSlope: 2.8390784
+      time: 1.25
+      value: 1.4
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.17543407
+      inWeight: 0.31128812
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  heightScale: 300
+  heightScale: 175
   perlinSettings:
-    seed: -5
-    octaves: 7
+    seed: 41
+    octaves: 6
     persistence: 0.5
     lacunarity: 2
-    scale: 500
-    offset: {x: 10, y: -2}
+    scale: 550
+    offset: {x: -129.3, y: 68}
     mode: 1
   midpointSettings:
-    seed: 53
+    seed: -2
     roughness: 0.65
     heightBounds: {x: 0, y: 1}
-  midpointInfluence: 0.4
+  midpointInfluence: 0.3
   falloffSettings:
     falloffMode: 0
     falloffValues: {x: 2, y: 4}
-    falloffBounds: {x: 0.5, y: 0.95}
+    falloffBounds: {x: 0.7, y: 1}
     falloffCurve:
       serializedVersion: 2
       m_Curve:

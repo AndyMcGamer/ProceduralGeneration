@@ -14,8 +14,8 @@ public class MeshData
     {
         triangles = new int[meshWidth * meshHeight * 6];
         triangleIndex = 0;
-        meshWidth++;
-        meshHeight++;
+        //meshWidth++;
+        //meshHeight++;
         verts = new Vector3[meshWidth * meshHeight];
         uvs = new Vector2[meshWidth * meshHeight];
 

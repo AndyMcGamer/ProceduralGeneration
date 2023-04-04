@@ -13,7 +13,7 @@ public static class MidpointDisplacement
         }
         System.Random r = new(seed);
         Displace(ref heightmap, chunksize, roughness, r);
-
+        
         Normalize(ref heightmap, minHeight, maxHeight);
         
         return heightmap;
@@ -29,9 +29,9 @@ public static class MidpointDisplacement
         }
         System.Random r = new(settings.seed);
         Displace(ref heightmap, chunksize, settings.roughness, r);
-
+        
         Normalize(ref heightmap, settings.heightBounds.x, settings.heightBounds.y, mapSize);
-
+        
         return heightmap;
     }
 
@@ -161,12 +161,11 @@ public static class MidpointDisplacement
             }
         }
 
-
         for (int i = 0; i < map.Length; i++)
         {
             for (int j = 0; j < map[0].Length; j++)
             {
-                map[i][j] = Mathf.InverseLerp(min, max, map[i][j]) * (maxHeight - minHeight) + minHeight;
+                map[i][j] = Mathf.InverseLerp(min, max, map[i][j]);
             }
         }
     }

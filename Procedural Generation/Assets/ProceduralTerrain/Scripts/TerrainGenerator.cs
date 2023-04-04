@@ -24,37 +24,40 @@ public class TerrainGenerator : MonoBehaviour
         chunkDictionary.Clear();
     }
 
-    public void Generate()
+    public void Generate(bool recalculate)
     {
-        if (heightmapSettings.useFalloff)
+        if (recalculate)
         {
-            switch (heightmapSettings.falloffSettings.falloffMode)
+            if (heightmapSettings.useFalloff)
             {
-                case FalloffMode.Values:
-                    falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffValues.x, heightmapSettings.falloffSettings.falloffValues.y, meshSettings.scale);
-                    break;
-                case FalloffMode.Bounds:
-                    falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffBounds);
-                    break;
-                case FalloffMode.Curve:
-                    falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffCurve);
-                    break;
-                default:
-                    break;
+                switch (heightmapSettings.falloffSettings.falloffMode)
+                {
+                    case FalloffMode.Values:
+                        falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffValues.x, heightmapSettings.falloffSettings.falloffValues.y, meshSettings.scale);
+                        break;
+                    case FalloffMode.Bounds:
+                        falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffBounds);
+                        break;
+                    case FalloffMode.Curve:
+                        falloffMap = FalloffGenerator.GenerateFalloffMap((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.falloffSettings.falloffCurve);
+                        break;
+                    default:
+                        break;
+                }
+
             }
-            
-        }
-        else
-        {
-            falloffMap = null;
-        }
-        if (heightmapSettings.useMidpoint)
-        {
-            midpointMap = MidpointDisplacement.GenerateMidpointDisplacement((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.midpointSettings, mapSize);
-        }
-        else
-        {
-            midpointMap = null;
+            else
+            {
+                falloffMap = null;
+            }
+            if (heightmapSettings.useMidpoint)
+            {
+                midpointMap = MidpointDisplacement.GenerateMidpointDisplacement((meshSettings.chunkSize + 1) * mapSize, heightmapSettings.midpointSettings, mapSize);
+            }
+            else
+            {
+                midpointMap = null;
+            }
         }
         for (int y = -mapSize/2; y < mapSize - mapSize /2; y++)
         {
@@ -64,13 +67,13 @@ public class TerrainGenerator : MonoBehaviour
                 if (chunkDictionary.ContainsKey(coord))
                 {
                     chunkDictionary[coord].UpdateChunk(heightmapSettings, meshSettings, terrainMaterial);
-                    chunkDictionary[coord].LoadChunk(ref falloffMap, ref midpointMap, lod);
+                    chunkDictionary[coord].LoadChunk(falloffMap, midpointMap, lod);
                 }
                 else
                 {
                     TerrainChunk chunk = new(coord, heightmapSettings, meshSettings, terrainContainer, terrainMaterial, detailLevels);
                     chunkDictionary.Add(coord, chunk);
-                    chunk.LoadChunk(ref falloffMap, ref midpointMap, lod);
+                    chunk.LoadChunk(falloffMap, midpointMap, lod);
                 }
             }
         }
@@ -78,7 +81,7 @@ public class TerrainGenerator : MonoBehaviour
 }
 
 [System.Serializable]
-public class LODInfo
+public struct LODInfo
 {
     public int lod;
 }

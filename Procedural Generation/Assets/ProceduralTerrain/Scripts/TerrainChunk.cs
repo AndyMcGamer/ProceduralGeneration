@@ -11,13 +11,13 @@ public class TerrainChunk
 
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
+    private MeshCollider meshCollider;
 
     private HeightMapSettings heightmapSettings;
     private MeshSettings meshSettings;
 
     private HeightMapData heightMap;
 
-    private LODInfo[] detailLevels;
     private LODMesh[] lodMeshes;
 
     public TerrainChunk(Vector2 position, HeightMapSettings heightmapSettings, MeshSettings meshSettings, Transform parent, Material material, LODInfo[] detailLevels)
@@ -30,7 +30,7 @@ public class TerrainChunk
         meshObject.transform.localScale = Vector3.one * meshSettings.scale;
         meshRenderer = meshObject.AddComponent<MeshRenderer>();
         meshFilter = meshObject.AddComponent<MeshFilter>();
-
+        meshCollider = meshObject.AddComponent<MeshCollider>();
         sampleCenter = position * meshSettings.chunkSize;
 
         Vector2 worldPos = meshSettings.worldSize * position;
@@ -39,7 +39,6 @@ public class TerrainChunk
 
         meshRenderer.material = material;
 
-        this.detailLevels = detailLevels;
         lodMeshes = new LODMesh[detailLevels.Length];
         for (int i = 0; i < detailLevels.Length; i++)
         {
@@ -58,14 +57,14 @@ public class TerrainChunk
     }
 
 
-    public void LoadChunk(ref float[][] falloffMap, ref float[][] midpointMap, int lod)
+    public void LoadChunk(float[][] falloffMap, float[][] midpointMap, int lod)
     {
-        heightMap = HeightmapGenerator.GenerateHeightmap(meshSettings.chunkSize, heightmapSettings, sampleCenter, ref falloffMap, ref midpointMap);
-        if (!lodMeshes[lod].hasMesh)
-        {
-            lodMeshes[lod].GetMesh(ref heightMap.heightMap, meshSettings);
-        }
+        heightMap = HeightmapGenerator.GenerateHeightmap(meshSettings.chunkSize, heightmapSettings, sampleCenter, falloffMap, midpointMap);
+        
+        lodMeshes[lod].GetMesh(heightMap.heightMap, meshSettings);
+        
         meshFilter.mesh = lodMeshes[lod].mesh;
+        meshCollider.sharedMesh = lodMeshes[lod].mesh;
     }
 }
 
@@ -79,11 +78,13 @@ public class LODMesh
     {
         this.lod = lod;
         hasMesh = false;
+        mesh = null;
     }
 
-    public void GetMesh(ref float[][] heightmap, MeshSettings meshSettings)
+    public void GetMesh(float[][] heightmap, MeshSettings meshSettings)
     {
-        mesh = MeshGenerator.GenerateMesh(ref heightmap, meshSettings, lod).CreateMesh();
+        
+        mesh = MeshGenerator.GenerateMesh(heightmap, meshSettings, lod).CreateMesh();
         hasMesh = true;
     }
 }

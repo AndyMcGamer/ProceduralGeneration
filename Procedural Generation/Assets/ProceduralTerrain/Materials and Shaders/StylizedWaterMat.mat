@@ -36,20 +36,20 @@ Material:
     m_Ints: []
     m_Floats:
     - _DepthDistance: 1
-    - _HorizonDistance: 5
+    - _HorizonDistance: 10
     - _QueueControl: 1
     - _QueueOffset: 0
     - _RefractionScale: 0.439
     - _RefractionSpeed: 0.01
-    - _RefractionStrength: 0.0042
+    - _RefractionStrength: 0.0015
     - _WaveLength: 1
     - _WaveSpeed: 0.3
-    - _WaveSteepness: 0.7
+    - _WaveSteepness: 0.2
     m_Colors:
     - _DeepColor: {r: 0, g: 0.09848648, b: 0.3584906, a: 1}
     - _EndColor: {r: 0.023412976, g: 0.1689734, b: 0.7090783, a: 1}
     - _HorizonColor: {r: 0.94509804, g: 0.09937067, b: 0, a: 0}
-    - _ShallowColor: {r: 0, g: 0.4084353, b: 0.754717, a: 0}
+    - _ShallowColor: {r: 0, g: 0.40997842, b: 0.75294113, a: 1}
     - _StartColor: {r: 0, g: 1.545098, b: 1.545098, a: 1}
     - _WaveDirections: {r: 0, g: 0.5, b: 0.89, a: 0.2}
   m_BuildTextureStacks: []

@@ -38,7 +38,7 @@ public static class MidpointDisplacement
 
     private static void Displace(ref float[][] heightmap, int chunksize, float roughness, System.Random r)
     {
-        int rectSize = NextPowerOfTwo(chunksize);
+        int rectSize = NextPowerOfTwo(chunksize) + 1;
         float curHeight = rectSize / 2f;
         float heightReduction = Mathf.Pow(-roughness, 2f);
 
